@@ -26,6 +26,19 @@
   <body>
     <!-- Start your project here-->
     <div class="container">
+      <div id="date-picker"></div>
+      <label for="wrapper_date">Select a date:</label>
+
+      <input
+        type="date"
+        id="wrapper_date"
+        name="trip-start"
+        min="1995-05-20"
+        max="2021-12-31"
+        onchange="handler(event)"
+        class="mb-4"
+      />
+
       <div class="row">
         <div class="col-md-8 mb-4 mb-md-0">
           <section id="wrapper-media"></section>
@@ -45,62 +58,74 @@
     <script type="text/javascript" src="js/mdb.min.js"></script>
     <!-- Custom scripts -->
     <script type="text/javascript">
-      let xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          let data = JSON.parse(this.responseText);
-          let copyright = data["copyright"];
-          let date = data["date"];
-          let explanation = data["explanation"];
-          let hdurl = data["hdurl"];
-          let media_type = data["media_type"];
-          let title = data["title"];
-          let url = data["url"];
+      // set max date to today for datepicker
+      wrapper_date.max = new Date().toISOString().split("T")[0];
 
-          let imageType = `
-            <div class="bg-image hover-overlay ripple">
-              <img id="wrapper-image" class="w-100" />
-              <a id="wrapper-hdurl" href="#!" target="_blank">
-                <div
-                  class="mask"
-                  style="background-color: rgba(57, 192, 237, 0.2)"
-                ></div>
-              </a>
-            </div>
-          </div>
-          `;
+      const nasaRequest = () => {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            let data = JSON.parse(this.responseText);
+            let copyright = data["copyright"];
+            let date = data["date"];
+            console.log(date);
 
-          let videoType = `<div class="ratio ratio-16x9">
-  <iframe
-  id="wrapper-video"
-    src=""
-    title=""
-    allowfullscreen
-  ></iframe>
-</div>`;
-          console.log(videoType);
-          document.getElementById("wrapper-title").innerHTML = title;
-          document.getElementById("wrapper-copyright").innerHTML = copyright;
-          document.getElementById("wrapper-explanation").innerHTML =
-            explanation;
+            let explanation = data["explanation"];
+            let hdurl = data["hdurl"];
+            let media_type = data["media_type"];
+            let title = data["title"];
+            let url = data["url"];
 
-          if (media_type === "video") {
-            document.getElementById("wrapper-media").innerHTML = videoType;
-            document.getElementById("wrapper-video").src = url;
-          } else {
-            document.getElementById("wrapper-media").innerHTML = imageType;
-            document.getElementById("wrapper-image").src = url;
-            document.getElementById("wrapper-hdurl").href = hdurl;
+            let imageType = `
+                        <div class="bg-image hover-overlay ripple">
+                          <img id="wrapper-image" class="w-100" />
+                          <a id="wrapper-hdurl" href="#!" target="_blank">
+                            <div
+                              class="mask"
+                              style="background-color: rgba(57, 192, 237, 0.2)"
+                            ></div>
+                          </a>
+                        </div>
+                      </div>
+                      `;
+
+            let videoType = `<div class="ratio ratio-16x9">
+              <iframe
+              id="wrapper-video"
+                src=""
+                title=""
+                allowfullscreen
+              ></iframe>
+            </div>`;
+            document.getElementById("wrapper-title").innerHTML = title;
+            document.getElementById("wrapper-copyright").innerHTML = copyright;
+            document.getElementById("wrapper-explanation").innerHTML =
+              explanation;
+
+            if (media_type === "video") {
+              document.getElementById("wrapper-media").innerHTML = videoType;
+              document.getElementById("wrapper-video").src = url;
+            } else {
+              document.getElementById("wrapper-media").innerHTML = imageType;
+              document.getElementById("wrapper-image").src = url;
+              document.getElementById("wrapper-hdurl").href = hdurl;
+            }
           }
-        }
-      };
-      let queryUrl = "https://api.nasa.gov/planetary/apod?";
-      let queryKey = "api_key=aSd5Nv7mi6s72iISz4OSALpabxzfpclXxAZu1Smx&";
-      let queryDate = "date=" + "2021-01-05" + "&";
+        };
+        let datepicker_date = document.getElementById("wrapper_date").value;
+        let queryUrl = "https://api.nasa.gov/planetary/apod?";
+        let queryKey = "api_key=aSd5Nv7mi6s72iISz4OSALpabxzfpclXxAZu1Smx&";
+        let queryDate = "date=" + datepicker_date + "&";
 
-      let queryFull = queryUrl + queryKey + queryDate;
-      xmlhttp.open("GET", queryFull, true);
-      xmlhttp.send();
+        let queryFull = queryUrl + queryKey + queryDate;
+        xmlhttp.open("GET", queryFull, true);
+        xmlhttp.send();
+      };
+
+      function handler(e) {
+        nasaRequest();
+      }
+      nasaRequest().onload;
     </script>
   </body>
 </html>
