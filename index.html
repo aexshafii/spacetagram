@@ -52,12 +52,23 @@
         </div>
       </div>
     </div>
+    <main></main>
     <!-- End your project here-->
 
     <!-- MDB -->
     <script type="text/javascript" src="js/mdb.min.js"></script>
     <!-- Custom scripts -->
     <script type="text/javascript">
+      const initApp = async () => {
+        // get json data from db
+        const images = await getDataFromDB();
+        console.log(images);
+        // render data to page
+        renderImages(images);
+        // add listeners
+      };
+      document.addEventListener("DOMContentLoaded", initApp);
+
       // set max date to today for datepicker
       wrapper_date.max = new Date().toISOString().split("T")[0];
 
@@ -68,8 +79,6 @@
             let data = JSON.parse(this.responseText);
             let copyright = data["copyright"];
             let date = data["date"];
-            console.log(date);
-
             let explanation = data["explanation"];
             let hdurl = data["hdurl"];
             let media_type = data["media_type"];
@@ -77,26 +86,26 @@
             let url = data["url"];
 
             let imageType = `
-                        <div class="bg-image hover-overlay ripple">
-                          <img id="wrapper-image" class="w-100" />
-                          <a id="wrapper-hdurl" href="#!" target="_blank">
-                            <div
-                              class="mask"
-                              style="background-color: rgba(57, 192, 237, 0.2)"
-                            ></div>
-                          </a>
-                        </div>
-                      </div>
-                      `;
+                                    <div class="bg-image hover-overlay ripple">
+                                      <img id="wrapper-image" class="w-100" />
+                                      <a id="wrapper-hdurl" href="#!" target="_blank">
+                                        <div
+                                          class="mask"
+                                          style="background-color: rgba(57, 192, 237, 0.2)"
+                                        ></div>
+                                      </a>
+                                    </div>
+                                  </div>
+                                  `;
 
             let videoType = `<div class="ratio ratio-16x9">
-              <iframe
-              id="wrapper-video"
-                src=""
-                title=""
-                allowfullscreen
-              ></iframe>
-            </div>`;
+                          <iframe
+                          id="wrapper-video"
+                            src=""
+                            title=""
+                            allowfullscreen
+                          ></iframe>
+                        </div>`;
             document.getElementById("wrapper-title").innerHTML = title;
             document.getElementById("wrapper-copyright").innerHTML = copyright;
             document.getElementById("wrapper-explanation").innerHTML =
@@ -115,12 +124,120 @@
         let datepicker_date = document.getElementById("wrapper_date").value;
         let queryUrl = "https://api.nasa.gov/planetary/apod?";
         let queryKey = "api_key=aSd5Nv7mi6s72iISz4OSALpabxzfpclXxAZu1Smx&";
-        let queryDate = "date=" + datepicker_date + "&";
+        let queryDate = "start_date=" + lastWeek() + "&";
 
         let queryFull = queryUrl + queryKey + queryDate;
         xmlhttp.open("GET", queryFull, true);
         xmlhttp.send();
+        console.log(datepicker_date);
+        console.log(queryFull);
       };
+      const renderImages = (images) => {
+        const main = document.querySelector("main");
+        const cardsArray = [];
+
+        images.forEach((image) => {
+          const elemObj = createCardElements();
+          const card = createImageCard(elemObj, image);
+          cardsArray.push(card);
+          // card elements
+          // image card
+          // push each card to the array
+        });
+        cardsArray.forEach((card) => {
+          main.appendChild(card);
+        });
+      };
+
+      const getDataFromDB = async () => {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            let data = JSON.parse(this.responseText);
+            let copyright = data["copyright"];
+            let date = data["date"];
+            let explanation = data["explanation"];
+            let hdurl = data["hdurl"];
+            let media_type = data["media_type"];
+            let title = data["title"];
+            let url = data["url"];
+
+            let imageType = `
+                                    <div class="bg-image hover-overlay ripple">
+                                      <img id="wrapper-image" class="w-100" />
+                                      <a id="wrapper-hdurl" href="#!" target="_blank">
+                                        <div
+                                          class="mask"
+                                          style="background-color: rgba(57, 192, 237, 0.2)"
+                                        ></div>
+                                      </a>
+                                    </div>
+                                  </div>
+                                  `;
+
+            let videoType = `<div class="ratio ratio-16x9">
+                          <iframe
+                          id="wrapper-video"
+                            src=""
+                            title=""
+                            allowfullscreen
+                          ></iframe>
+                        </div>`;
+            document.getElementById("wrapper-title").innerHTML = title;
+            document.getElementById("wrapper-copyright").innerHTML = copyright;
+            document.getElementById("wrapper-explanation").innerHTML =
+              explanation;
+
+            if (media_type === "video") {
+              document.getElementById("wrapper-media").innerHTML = videoType;
+              document.getElementById("wrapper-video").src = url;
+            } else {
+              document.getElementById("wrapper-media").innerHTML = imageType;
+              document.getElementById("wrapper-image").src = url;
+              document.getElementById("wrapper-hdurl").href = hdurl;
+            }
+          }
+        };
+        let datepicker_date = document.getElementById("wrapper_date").value;
+        let queryUrl = "https://api.nasa.gov/planetary/apod?";
+        let queryKey = "api_key=aSd5Nv7mi6s72iISz4OSALpabxzfpclXxAZu1Smx&";
+        let queryDate = "start_date=" + lastWeek() + "&";
+
+        let queryFull = queryUrl + queryKey + queryDate;
+        xmlhttp.open("GET", queryFull, true);
+        xmlhttp.send();
+        const fakeDataStream = await fetch(queryFull);
+        const jsonData = await fakeDataStream.json();
+        return jsonData;
+      };
+      getDataFromDB();
+      const createCardElements = () => {
+        const article = document.createElement("article");
+        const img = document.createElement("img");
+        const title = document.createElement("h2");
+
+        return { article, img, title };
+      };
+
+      const createImageCard = (elemObj, image) => {
+        const { article, img, title } = elemObj;
+
+        name.textContent = `${image.title}`;
+        img.src = image.url;
+
+        article.appendChild(img);
+
+        return article;
+      };
+      function lastWeek() {
+        var today = new Date();
+        var lastWeek = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 7
+        );
+        return lastWeek.toISOString().split("T")[0];
+      }
 
       function handler(e) {
         nasaRequest();
