@@ -27,9 +27,9 @@
     <!-- Start your project here-->
     <div class="container">
       <div id="date-picker"></div>
-      <!-- <label for="wrapper_date">Select a date:</label> -->
+      <label for="wrapper_date">Select a date:</label> -->
 
-      <!-- <input
+      <input
         type="date"
         id="wrapper_date"
         name="trip-start"
@@ -37,7 +37,7 @@
         max="2021-12-31"
         onchange="handler(event)"
         class="mb-4"
-      /> -->
+      />
 
       <div class="row">
         <div class="col-md-8 mb-4 mb-md-0">
@@ -64,7 +64,6 @@
       const initApp = async () => {
         // get json data from db
         const images = await getDataFromDB();
-        console.log(images);
         // render data to page
         renderImages(images);
         // add listeners
@@ -72,71 +71,8 @@
       document.addEventListener("DOMContentLoaded", initApp);
 
       // set max date to today for datepicker
-      // wrapper_date.max = new Date().toISOString().split("T")[0];
+      wrapper_date.max = new Date().toISOString().split("T")[0];
 
-      // const nasaRequest = () => {
-      //   let xmlhttp = new XMLHttpRequest();
-      //   xmlhttp.onreadystatechange = function () {
-      //     if (this.readyState == 4 && this.status == 200) {
-      //       let data = JSON.parse(this.responseText);
-      //       let copyright = data["copyright"];
-      //       let date = data["date"];
-      //       let explanation = data["explanation"];
-      //       let hdurl = data["hdurl"];
-      //       let media_type = data["media_type"];
-      //       let title = data["title"];
-      //       let url = data["url"];
-
-      //       let imageType = `
-      //                               <div class="bg-image hover-overlay ripple">
-      //                                 <img id="wrapper-image" class="w-100" />
-      //                                 <a id="wrapper-hdurl" href="#!" target="_blank">
-      //                                   <div
-      //                                     class="mask"
-      //                                     style="background-color: rgba(57, 192, 237, 0.2)"
-      //                                   ></div>
-      //                                 </a>
-      //                               </div>
-      //                             </div>
-      //                             `;
-
-      //       let videoType = `<div class="ratio ratio-16x9">
-      //                     <iframe
-      //                     id="wrapper-video"
-      //                       src=""
-      //                       title=""
-      //                       allowfullscreen
-      //                     ></iframe>
-      //                   </div>`;
-      //       document.getElementById("wrapper-title").innerHTML = title;
-      //       document.getElementById("wrapper-copyright").innerHTML = copyright;
-      //       document.getElementById("wrapper-explanation").innerHTML =
-      //         explanation;
-
-      //       if (media_type === "video") {
-      //         document.getElementById("wrapper-media").innerHTML = videoType;
-      //        const videoWrapper=  document.createElement("iframe")
-      //       videoWrapper.src = url;
-      //       section.appendChild(videoWrapper)
-            
-      //       } else {
-      //         document.getElementById("wrapper-media").innerHTML = imageType;
-      //         document.getElementById("wrapper-image").src = url;
-      //         document.getElementById("wrapper-hdurl").href = hdurl;
-      //       }
-      //     }
-      //   };
-      //   let datepicker_date = document.getElementById("wrapper_date").value;
-      //   let queryUrl = "https://api.nasa.gov/planetary/apod?";
-      //   let queryKey = "api_key=aSd5Nv7mi6s72iISz4OSALpabxzfpclXxAZu1Smx&";
-      //   let queryDate = "start_date=" + lastWeek() + "&";
-
-      //   let queryFull = queryUrl + queryKey + queryDate;
-      //   xmlhttp.open("GET", queryFull, true);
-      //   xmlhttp.send();
-      //   console.log(datepicker_date);
-      //   console.log(queryFull);
-      // };
 
 
       const renderImages = (images) => {
@@ -147,9 +83,7 @@
           const elemObj = createCardElements();
           const card = createImageCard(elemObj, image);
           cardsArray.push(card);
-          // card elements
-          // image card
-          // push each card to the array
+   
         });
         cardsArray.forEach((card) => {
           main.appendChild(card);
@@ -169,27 +103,6 @@
             let title = data["title"];
             let url = data["url"];
 
-            let imageType = `
-                                    <div class="bg-image hover-overlay ripple">
-                                      <img id="wrapper-image" class="w-100" />
-                                      <a id="wrapper-hdurl" href="#!" target="_blank">
-                                        <div
-                                          class="mask"
-                                          style="background-color: rgba(57, 192, 237, 0.2)"
-                                        ></div>
-                                      </a>
-                                    </div>
-                                  </div>
-                                  `;
-
-            let videoType = `<div class="ratio ratio-16x9">
-                          <iframe
-                          id="wrapper-video"
-                            src=""
-                            title=""
-                            allowfullscreen
-                          ></iframe>
-                        </div>`;
             document.getElementById("wrapper-title").innerHTML = title;
             document.getElementById("wrapper-copyright").innerHTML = copyright;
             document.getElementById("wrapper-explanation").innerHTML =
@@ -218,7 +131,8 @@
         const jsonData = await fakeDataStream.json();
         return jsonData;
       };
-      getDataFromDB();
+
+
       const createCardElements = () => {
 
 
@@ -248,8 +162,6 @@ section.className = "card-img-top"
 section.id = "wrapper-media"
 
 
-        const article = document.createElement("article");
-        const title = document.createElement("h2");
 
         return { cardWrapper, cardBody, cardText, cardTitle, likeButton, section, videoWrapper, photo };
       };
@@ -263,7 +175,6 @@ section.id = "wrapper-media"
   if (sourceImage.media_type === "video") {
     videoWrapper.src = sourceImage.url;
 videoWrapper.className =  "card-img-top"
-videoWrapper.style = "height: 10rem"
   section.appendChild(videoWrapper)
             } else {
            photo.src = sourceImage.url;
@@ -298,9 +209,9 @@ videoWrapper.style = "height: 10rem"
       }
 
       // function handler(e) {
-      //   nasaRequest();
+      //  getDatafromDB();
       // }
-      // nasaRequest().onload;
+      // getDatafromDB().onload;
     </script>
   </body>
 </html>
